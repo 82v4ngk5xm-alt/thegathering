@@ -3,6 +3,7 @@ import { CommentsDisplay } from '@/components/CommentsDisplay'
 import { getCommentsForScripture } from '@/lib/scripture'
 import { Metadata } from 'next'
 import { Scripture } from '@/types'
+import { createClient } from '@supabase/supabase-js'
 
 // Force dynamic rendering - don't prerender this page statically
 export const dynamic = 'force-dynamic'
@@ -21,25 +22,37 @@ export const metadata: Metadata = {
 
 async function getTodayScripture(): Promise<Scripture | null> {
   try {
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000'
-    
-    const response = await fetch(`${baseUrl}/api/scripture`, {
-      next: { revalidate: 3600 }
-    })
+    // Create Supabase client directly instead of fetching through HTTP
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_KEY || ''
+    )
 
-    if (!response.ok) {
-      console.error('[HomePage] API returned non-ok status:', response.status, response.statusText)
-      const errorText = await response.text()
-      console.error('[HomePage] Error response body:', errorText)
+    const { data: scriptures, error } = await supabase
+      .from('scriptures')
+      .select('*')
+      .order('display_order', { ascending: true })
+
+    if (error) {
+      console.error('[HomePage] Supabase error:', error.message)
       return null
     }
 
-    const data = await response.json()
-    return data.scripture || null
+    if (!scriptures || scriptures.length === 0) {
+      console.error('[HomePage] No scriptures found in database')
+      return null
+    }
+
+    // Calculate which scripture to show based on days since epoch
+    const today = new Date()
+    const epoch = new Date('2025-01-01')
+    const daysSinceEpoch = Math.floor((today.getTime() - epoch.getTime()) / (1000 * 60 * 60 * 24))
+    const scriptureIndex = daysSinceEpoch % scriptures.length
+    const todayScripture = scriptures[scriptureIndex]
+
+    return todayScripture as Scripture
   } catch (error) {
-    console.error('[HomePage] Fetch error:', error instanceof Error ? error.message : String(error))
+    console.error('[HomePage] Error:', error instanceof Error ? error.message : String(error))
     return null
   }
 }

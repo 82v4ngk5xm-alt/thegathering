@@ -7,6 +7,9 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY || ''
 )
 
+// This endpoint should not be cached
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const { data: scriptures, error } = await supabase
@@ -41,6 +44,10 @@ export async function GET() {
       totalScriptures: scriptures.length,
       daysSinceEpoch,
       index: scriptureIndex,
+    }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400'
+      }
     })
   } catch (error) {
     console.error('[API] Unexpected error:', error)

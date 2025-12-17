@@ -4,7 +4,9 @@ import { getCommentsForScripture } from '@/lib/scripture'
 import { Metadata } from 'next'
 import { Scripture } from '@/types'
 
-export const revalidate = 3600 // Revalidate once per hour
+// Force dynamic rendering - don't prerender this page statically
+export const dynamic = 'force-dynamic'
+export const revalidate = 0 // Don't cache
 
 export const metadata: Metadata = {
   title: 'Scripture of the Day - The Gathering',
@@ -19,36 +21,25 @@ export const metadata: Metadata = {
 
 async function getTodayScripture(): Promise<Scripture | null> {
   try {
-    console.log('[HomePage] Fetching today scripture from API...')
-    
     const baseUrl = process.env.VERCEL_URL 
       ? `https://${process.env.VERCEL_URL}`
       : 'http://localhost:3000'
-    
-    console.log('[HomePage] Using baseUrl:', baseUrl)
     
     const response = await fetch(`${baseUrl}/api/scripture`, {
       next: { revalidate: 3600 }
     })
 
-    console.log('[HomePage] Response status:', response.status)
-
     if (!response.ok) {
-      console.error('[HomePage] API returned status:', response.status)
+      console.error('[HomePage] API returned non-ok status:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.error('[HomePage] Error response body:', errorText)
       return null
     }
 
     const data = await response.json()
-    console.log('[HomePage] Full API response:', data)
-    console.log('[HomePage] API returned scripture:', {
-      book: data.scripture?.book,
-      chapter: data.scripture?.chapter,
-      display_order: data.scripture?.display_order
-    })
-    
     return data.scripture || null
   } catch (error) {
-    console.error('[HomePage] Error fetching scripture:', error)
+    console.error('[HomePage] Fetch error:', error instanceof Error ? error.message : String(error))
     return null
   }
 }

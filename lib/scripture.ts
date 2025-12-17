@@ -1,6 +1,5 @@
 import { supabase } from './supabase'
 import { Scripture, Comment } from '@/types'
-import { format } from 'date-fns'
 
 /**
  * Get the scripture for today based on date rotation

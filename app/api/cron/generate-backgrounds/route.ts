@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAllScriptures, updateScriptureImage } from '@/lib/scripture'
-import { generateScriptureBackground, getUnsplashBackground } from '@/lib/image-generation'
+import { getUnsplashBackground } from '@/lib/image-generation'
+// import { generateScriptureBackground } from '@/lib/image-generation'  // TODO: Enable when Replicate API is configured
 
 export const dynamic = 'force-dynamic'
 
@@ -38,11 +39,13 @@ export async function GET(request: NextRequest) {
 
         if (process.env.REPLICATE_API_TOKEN) {
           try {
-            imageUrl = await generateScriptureBackground({
-              book: scripture.book,
-              chapter: scripture.chapter,
-              verses: scripture.verses,
-            })
+            // TODO: Enable AI generation when Replicate is configured
+            // imageUrl = await generateScriptureBackground({
+            //   book: scripture.book,
+            //   chapter: scripture.chapter,
+            //   verses: scripture.verses,
+            // })
+            imageUrl = getUnsplashBackground(scripture.book)
           } catch (error) {
             console.log('AI generation failed, using fallback:', error)
             imageUrl = getUnsplashBackground(scripture.book)

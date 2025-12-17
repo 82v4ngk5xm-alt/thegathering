@@ -68,7 +68,7 @@ export default async function HomePage() {
     return (
       <main>
         <ScriptureDisplay scripture={scripture} />
-        <CommentsDisplay scriptureId={scripture.id} comments={comments} totalComments={comments.length} />
+        <CommentsDisplay scriptureId={scripture.id} comments={comments} />
       </main>
     )
   } catch (error) {

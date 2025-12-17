@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { getTodayScripture, getCommentsForScripture } from '@/lib/scripture'
 
 export const revalidate = 86400 // Revalidate once per day
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const scripture = await getTodayScripture()
 

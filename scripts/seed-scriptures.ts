@@ -219,7 +219,7 @@ async function seedScriptures() {
     console.log('Starting to seed scriptures...')
 
     // Insert scriptures
-    const { data, error } = await supabaseAdmin.from('scriptures').insert(
+    const { error } = await supabaseAdmin.from('scriptures').insert(
       encouragingScriptures.map((scripture, index) => ({
         ...scripture,
         display_order: index,

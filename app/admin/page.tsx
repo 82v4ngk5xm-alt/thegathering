@@ -3,7 +3,6 @@
 import { AdminPanel } from '@/components/AdminPanel'
 import { AdminLogin } from '@/components/AdminLogin'
 import { useState, useEffect } from 'react'
-import { Metadata } from 'next'
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)

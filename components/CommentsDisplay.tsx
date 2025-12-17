@@ -7,10 +7,9 @@ import { formatDistanceToNow } from 'date-fns'
 interface CommentsDisplayProps {
   scriptureId: string
   comments: Comment[]
-  totalComments: number
 }
 
-export function CommentsDisplay({ scriptureId, comments: initialComments, totalComments }: CommentsDisplayProps) {
+export function CommentsDisplay({ scriptureId, comments: initialComments }: CommentsDisplayProps) {
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(false)

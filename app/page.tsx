@@ -21,7 +21,7 @@ async function getTodayScripture(): Promise<Scripture | null> {
   try {
     console.log('[HomePage] Fetching today scripture from API...')
     
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/scripture`, {
+    const response = await fetch('/api/scripture', {
       next: { revalidate: 3600 }
     })
 

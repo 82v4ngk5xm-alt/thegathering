@@ -21,7 +21,11 @@ async function getTodayScripture(): Promise<Scripture | null> {
   try {
     console.log('[HomePage] Fetching today scripture from API...')
     
-    const response = await fetch('/api/scripture', {
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+    
+    const response = await fetch(`${baseUrl}/api/scripture`, {
       next: { revalidate: 3600 }
     })
 

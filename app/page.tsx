@@ -25,9 +25,13 @@ async function getTodayScripture(): Promise<Scripture | null> {
       ? `https://${process.env.VERCEL_URL}`
       : 'http://localhost:3000'
     
+    console.log('[HomePage] Using baseUrl:', baseUrl)
+    
     const response = await fetch(`${baseUrl}/api/scripture`, {
       next: { revalidate: 3600 }
     })
+
+    console.log('[HomePage] Response status:', response.status)
 
     if (!response.ok) {
       console.error('[HomePage] API returned status:', response.status)
@@ -35,6 +39,7 @@ async function getTodayScripture(): Promise<Scripture | null> {
     }
 
     const data = await response.json()
+    console.log('[HomePage] Full API response:', data)
     console.log('[HomePage] API returned scripture:', {
       book: data.scripture?.book,
       chapter: data.scripture?.chapter,
